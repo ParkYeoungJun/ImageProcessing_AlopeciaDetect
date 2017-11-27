@@ -1,23 +1,108 @@
 package com.soongsil.alopeciadetect;
 
-import android.annotation.TargetApi;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
-import android.content.pm.PackageManager;
-import android.os.Build;
-import android.support.annotation.NonNull;
-import android.support.v4.content.ContextCompat;
+import android.app.Activity;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.provider.MediaStore;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.SurfaceView;
-import android.view.WindowManager;
+import android.view.View;
+import android.widget.Button;
 
-import org.opencv.android.BaseLoaderCallback;
-import org.opencv.android.CameraBridgeViewBase;
-import org.opencv.android.LoaderCallbackInterface;
-import org.opencv.android.OpenCVLoader;
-import org.opencv.core.Mat;
+import com.soongsil.alopeciadetect.views.PictureActivity;
+import com.soongsil.alopeciadetect.views.QuestionActivity;
+
+import java.io.ByteArrayOutputStream;
+
+import static com.soongsil.alopeciadetect.utils.RequestCode.GALLERY_REQUEST_CODE;
+import static com.soongsil.alopeciadetect.utils.RequestCode.QUESTION_REQUEST_CODE;
+
+
+public class MainActivity extends AppCompatActivity{
+
+    private ViewPager viewPager;
+    private int score;
+
+    private Button fromGallery;
+    private Button fromCamera;
+
+    private Bitmap headPicture;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState){
+        setTheme(R.style.AppTheme);
+
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        initial();
+
+        Intent questionIntent = new Intent(getApplicationContext(), QuestionActivity.class);;
+        startActivityForResult(questionIntent, QUESTION_REQUEST_CODE);
+    }
+
+    private void initial() {
+        score = 0;
+
+        fromGallery = findViewById(R.id.btn_from_gallery);
+        fromCamera = findViewById(R.id.btn_from_camera);
+
+        fromGallery.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(Intent.ACTION_PICK);
+                intent.setType(android.provider.MediaStore.Images.Media.CONTENT_TYPE);
+                intent.setData(android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                startActivityForResult(intent, GALLERY_REQUEST_CODE);
+            }
+        });
+        fromCamera.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if(data == null || resultCode != Activity.RESULT_OK) {
+            return;
+        }
+
+        if(requestCode == QUESTION_REQUEST_CODE) {
+            Bundle bundle = data.getExtras().getBundle("data");
+            score = bundle.getInt("score");
+        }
+        else if(requestCode == GALLERY_REQUEST_CODE) {
+            try {
+
+                headPicture = MediaStore.Images.Media.getBitmap(getContentResolver(), data.getData());
+
+                Intent picIntent = new Intent(getApplicationContext(), PictureActivity.class);
+
+                ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                headPicture.compress(Bitmap.CompressFormat.PNG, 1, stream);
+                byte[] bytes = stream.toByteArray();
+                picIntent.putExtra("picture",bytes);
+                startActivity(picIntent);
+
+            } catch (Exception e) {
+                Log.e("test", e.getMessage());
+            }
+        }
+    }
+}
+
+
+
+/**
+
+참고용
 
 public class MainActivity extends AppCompatActivity
         implements CameraBridgeViewBase.CvCameraViewListener2 {
@@ -201,3 +286,6 @@ public class MainActivity extends AppCompatActivity
 
 
 }
+
+
+**/

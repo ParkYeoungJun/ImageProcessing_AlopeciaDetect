@@ -1,13 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.soongsil.alopeciadetect.MainActivity">
+    android:orientation="vertical"
+    android:gravity="center"
+    android:background="@android:color/white">
 
-    <org.opencv.android.JavaCameraView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/activity_surface_view"/>
+    <Button
+        android:id="@+id/btn_from_gallery"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="갤러리에서 가져오기"
+        android:background="@drawable/round_corner_button"
+        android:layout_marginBottom="30dp"
+        android:gravity="center" />
 
-</android.support.constraint.ConstraintLayout>
+    <Button
+        android:id="@+id/btn_from_camera"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="사진 찍기"
+        android:background="@drawable/round_corner_button"
+        android:gravity="center"/>
+
+</LinearLayout>

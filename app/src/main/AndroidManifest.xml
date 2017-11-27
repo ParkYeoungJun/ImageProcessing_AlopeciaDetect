@@ -2,17 +2,19 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.soongsil.alopeciadetect">
 
-    <uses-permission android:name="android.permission.CAMERA"/>
-    <uses-feature android:name="android.hardware.camera" android:required="false"/>
-    <uses-feature android:name="android.hardware.camera.autofocus" android:required="false"/>
-    <uses-feature android:name="android.hardware.camera.front" android:required="false"/>
-    <uses-feature android:name="android.hardware.camera.front.autofocus"  android:required="false"/>
+    <!--<uses-permission android:name="android.permission.CAMERA"/>-->
+    <!--<uses-feature android:name="android.hardware.camera" android:required="false"/>-->
+    <!--<uses-feature android:name="android.hardware.camera.autofocus" android:required="false"/>-->
+    <!--<uses-feature android:name="android.hardware.camera.front" android:required="false"/>-->
+    <!--<uses-feature android:name="android.hardware.camera.front.autofocus"  android:required="false"/>-->
 
-    <supports-screens android:resizeable="true"
-        android:smallScreens="true"
-        android:normalScreens="true"
-        android:largeScreens="true"
-        android:anyDensity="true" />
+    <!--<supports-screens android:resizeable="true"-->
+        <!--android:smallScreens="true"-->
+        <!--android:normalScreens="true"-->
+        <!--android:largeScreens="true"-->
+        <!--android:anyDensity="true" />-->
+
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
 
     <application
         android:allowBackup="true"
@@ -21,15 +23,23 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
         <activity android:name=".MainActivity"
-            android:screenOrientation="landscape"
-            android:configChanges="keyboardHidden|orientation">
+            android:theme="@style/SplashTheme">
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity android:name=".views.QuestionActivity"
+            android:theme="@style/AppFullScreenTheme"/>
+
+        <activity android:name=".views.PictureActivity"
+            android:theme="@style/AppFullScreenTheme"/>
+
     </application>
 
 </manifest>
