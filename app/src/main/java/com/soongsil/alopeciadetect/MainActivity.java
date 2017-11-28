@@ -3,6 +3,7 @@ package com.soongsil.alopeciadetect;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -81,14 +82,10 @@ public class MainActivity extends AppCompatActivity{
         else if(requestCode == GALLERY_REQUEST_CODE) {
             try {
 
-                headPicture = MediaStore.Images.Media.getBitmap(getContentResolver(), data.getData());
+                Uri uri = data.getData();
 
                 Intent picIntent = new Intent(getApplicationContext(), PictureActivity.class);
-
-                ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                headPicture.compress(Bitmap.CompressFormat.PNG, 1, stream);
-                byte[] bytes = stream.toByteArray();
-                picIntent.putExtra("picture",bytes);
+                picIntent.putExtra("uri",uri.toString());
                 startActivity(picIntent);
 
             } catch (Exception e) {
