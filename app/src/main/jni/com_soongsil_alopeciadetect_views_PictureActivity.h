@@ -42,7 +42,7 @@ JNIEXPORT void JNICALL Java_com_soongsil_alopeciadetect_views_PictureActivity_Mo
 /*
  * Class:     com_soongsil_alopeciadetect_views_PictureActivity
  * Method:    IsKeratin
- * Signature: (JJ)V
+ * Signature: (JII)V
  */
 JNIEXPORT int JNICALL Java_com_soongsil_alopeciadetect_views_PictureActivity_IsKeratin
   (JNIEnv *, jobject, jlong);

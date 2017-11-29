@@ -165,9 +165,7 @@ public class PictureActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                int score = 0;
-
-                score = IsKeratin(matOrigin.getNativeObjAddr());
+                int score = IsKeratin(matOrigin.getNativeObjAddr());
 
                 Toast.makeText(getApplicationContext(), "score : "+ score , Toast.LENGTH_LONG).show();
 

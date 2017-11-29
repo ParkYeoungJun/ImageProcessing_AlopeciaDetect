@@ -58,11 +58,10 @@ JNIEXPORT void JNICALL Java_com_soongsil_alopeciadetect_views_PictureActivity_Mo
 JNIEXPORT int JNICALL Java_com_soongsil_alopeciadetect_views_PictureActivity_IsKeratin
         (JNIEnv * env, jobject instance, jlong matAddrInput) {
 
-    int score = 1;
+    int rtnScore = 1;
 
     Mat &matInput = *(Mat *)matAddrInput;
-
-    Mat matGrey, img_labels, stats, centroids, matBinary, result;
+    Mat matGrey, img_labels, stats, centroids, matBinary;
 
     //gray-scale
     cvtColor(matInput, matGrey, CV_RGB2GRAY);
@@ -73,13 +72,13 @@ JNIEXPORT int JNICALL Java_com_soongsil_alopeciadetect_views_PictureActivity_IsK
 
 
     //labeling
-    int numOfLables = connectedComponentsWithStats(~matBinary, img_labels, stats, centroids, 8, CV_32S);
-    if(numOfLables > 1000)	score = 5;
-    else if(numOfLables > 700)	score = 4;
-    else if(numOfLables > 500)	score = 3;
-    else if(numOfLables > 250)	score = 2;
+    int numOfLabels = connectedComponentsWithStats(~matBinary, img_labels, stats, centroids, 8, CV_32S);
+    if(numOfLabels > 1000)	rtnScore = 5;
+    else if(numOfLabels > 700)	rtnScore = 4;
+    else if(numOfLabels > 500)	rtnScore = 3;
+    else if(numOfLabels > 250)	rtnScore = 2;
 
-    return score;
+    return rtnScore;
 }
 
 JNIEXPORT void JNICALL Java_com_soongsil_alopeciadetect_views_PictureActivity_CanyEdgeDetect
