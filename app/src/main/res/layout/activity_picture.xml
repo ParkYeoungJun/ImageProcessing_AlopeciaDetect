@@ -34,7 +34,13 @@
             android:id="@+id/btn_edge"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="cannyEdge"/>
+            android:text="toEdge"/>
+
+        <Button
+            android:id="@+id/btn_kertin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Keratin"/>
 
     </LinearLayout>
 

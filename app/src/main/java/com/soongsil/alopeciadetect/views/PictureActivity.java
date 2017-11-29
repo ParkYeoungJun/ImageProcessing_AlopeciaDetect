@@ -36,6 +36,7 @@ public class PictureActivity extends AppCompatActivity {
     private Button toGrey;
     private Button toBInary;
     private Button toEdge;
+    private Button keratin;
 
     /*
      * Call OpenCV library
@@ -44,6 +45,7 @@ public class PictureActivity extends AppCompatActivity {
     public native void Segmentation(long matAddrInput, long matAddrResult);
     public native void MorphologyOpening(long matAddrInput, long matAddrResult);
     public native void MorphologyClosing(long matAddrInput, long matAddrResult);
+    public native int IsKeratin(long matAddrInput);
     public native void CanyEdgeDetect(long matAddrInput, long matAddrResult, int lowThreshold,
                                       int ratio, int kernel_size);
 
@@ -72,6 +74,7 @@ public class PictureActivity extends AppCompatActivity {
         toGrey = findViewById(R.id.btn_grey);
         toEdge = findViewById(R.id.btn_edge);
         toBInary = findViewById(R.id.btn_binary);
+        keratin = findViewById(R.id.btn_kertin);
 
         try {
 
@@ -156,6 +159,18 @@ public class PictureActivity extends AppCompatActivity {
                 } else {
                     Toast.makeText(getApplicationContext(), "Please create Greyscale", Toast.LENGTH_LONG).show();
                 }
+            }
+        });
+        keratin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                int score = 0;
+
+                score = IsKeratin(matOrigin.getNativeObjAddr());
+
+                Toast.makeText(getApplicationContext(), "score : "+ score , Toast.LENGTH_LONG).show();
+
             }
         });
     }
