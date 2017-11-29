@@ -28,6 +28,31 @@ JNIEXPORT void JNICALL Java_com_soongsil_alopeciadetect_views_PictureActivity_Se
     threshold(matInput, matResult, 0, 255, THRESH_OTSU | THRESH_BINARY);
 }
 
+JNIEXPORT void JNICALL Java_com_soongsil_alopeciadetect_views_PictureActivity_MorphologyOpening
+        (JNIEnv * env, jobject instance, jlong matAddrInput, jlong matAddrResult) {
+
+    Mat &matInput = *(Mat *)matAddrInput;
+    Mat &matResult = *(Mat *)matAddrResult;
+
+    Mat element5(5, 5, CV_8U, Scalar(1));
+
+    morphologyEx(matInput, matResult, MORPH_OPEN, element5);
+
+}
+
+JNIEXPORT void JNICALL Java_com_soongsil_alopeciadetect_views_PictureActivity_MorphologyClosing
+        (JNIEnv * env, jobject instance, jlong matAddrInput, jlong matAddrResult) {
+
+
+    Mat &matInput = *(Mat *)matAddrInput;
+    Mat &matResult = *(Mat *)matAddrResult;
+
+    Mat element5(5, 5, CV_8U, Scalar(1));
+
+    morphologyEx(matInput, matResult, MORPH_CLOSE, element5);
+
+}
+
 JNIEXPORT void JNICALL Java_com_soongsil_alopeciadetect_views_PictureActivity_CanyEdgeDetect
         (JNIEnv *env, jobject instance, jlong matAddrInput, jlong matAddrResult, jint lowThreshold, jint ratio, jint kernel_size) {
 

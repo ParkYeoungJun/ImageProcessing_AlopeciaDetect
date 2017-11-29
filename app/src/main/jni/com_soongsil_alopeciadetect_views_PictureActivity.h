@@ -18,9 +18,25 @@ JNIEXPORT void JNICALL Java_com_soongsil_alopeciadetect_views_PictureActivity_Co
 /*
  * Class:     com_soongsil_alopeciadetect_views_PictureActivity
  * Method:    Segmentation
- * Signature: (JJDDI)V
+ * Signature: (JJ)V
  */
 JNIEXPORT void JNICALL Java_com_soongsil_alopeciadetect_views_PictureActivity_Segmentation
+  (JNIEnv *, jobject, jlong, jlong);
+
+/*
+ * Class:     com_soongsil_alopeciadetect_views_PictureActivity
+ * Method:    MorphologyOpening
+ * Signature: (JJ)V
+ */
+JNIEXPORT void JNICALL Java_com_soongsil_alopeciadetect_views_PictureActivity_MorphologyOpening
+  (JNIEnv *, jobject, jlong, jlong);
+
+/*
+ * Class:     com_soongsil_alopeciadetect_views_PictureActivity
+ * Method:    MorphologyClosing
+ * Signature: (JJ)V
+ */
+JNIEXPORT void JNICALL Java_com_soongsil_alopeciadetect_views_PictureActivity_MorphologyClosing
   (JNIEnv *, jobject, jlong, jlong);
 
 /*

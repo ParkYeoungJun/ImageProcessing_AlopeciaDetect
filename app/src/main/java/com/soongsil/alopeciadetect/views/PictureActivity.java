@@ -26,6 +26,8 @@ import java.net.URI;
  */
 
 public class PictureActivity extends AppCompatActivity {
+    // TODO: Try Morphology function
+
 
     private Bitmap picOrigin, picGrey, picBinary, picEdge;
     private ImageView headImage;
@@ -35,10 +37,20 @@ public class PictureActivity extends AppCompatActivity {
     private Button toBInary;
     private Button toEdge;
 
+    /*
+     * Call OpenCV library
+     */
     public native void ConvertRGBtoGray(long matAddrInput, long matAddrResult);
     public native void Segmentation(long matAddrInput, long matAddrResult);
+    public native void MorphologyOpening(long matAddrInput, long matAddrResult);
+    public native void MorphologyClosing(long matAddrInput, long matAddrResult);
     public native void CanyEdgeDetect(long matAddrInput, long matAddrResult, int lowThreshold,
                                       int ratio, int kernel_size);
+
+    /*
+     * Native library
+     */
+
 
     static {
         System.loadLibrary("opencv_java3");
