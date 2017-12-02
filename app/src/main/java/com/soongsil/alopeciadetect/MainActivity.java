@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.soongsil.alopeciadetect.views.PictureActivity;
 import com.soongsil.alopeciadetect.views.QuestionActivity;
@@ -24,7 +25,7 @@ import static com.soongsil.alopeciadetect.utils.RequestCode.QUESTION_REQUEST_COD
 public class MainActivity extends AppCompatActivity{
 
     private ViewPager viewPager;
-    private int score;
+    private int[] score;
 
     private Button fromGallery;
     private Button fromCamera;
@@ -45,7 +46,6 @@ public class MainActivity extends AppCompatActivity{
     }
 
     private void initial() {
-        score = 0;
 
         fromGallery = findViewById(R.id.btn_from_gallery);
         fromCamera = findViewById(R.id.btn_from_camera);
@@ -71,15 +71,17 @@ public class MainActivity extends AppCompatActivity{
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if(data == null || resultCode != Activity.RESULT_OK) {
+        if(data == null) {
             return;
         }
 
         if(requestCode == QUESTION_REQUEST_CODE) {
             Bundle bundle = data.getExtras().getBundle("data");
-            score = bundle.getInt("score");
+            score = bundle.getIntArray("score");
+
+            Log.e("asdf", "asdfadf");
         }
-        else if(requestCode == GALLERY_REQUEST_CODE) {
+        else if(requestCode == GALLERY_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
             try {
 
                 Uri uri = data.getData();

@@ -1,15 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:gravity="center">
 
-    <Button
-        android:id="@+id/frag_submit"
-        android:layout_height="wrap_content"
-        android:layout_width="100dp"
-        android:background="@drawable/round_corner_button"
-        android:text="submit" />
+    <com.unstoppable.submitbuttonview.SubmitButton
+        android:id="@+id/sbtn_loading"
+        android:layout_height="50dp"
+        android:layout_width="150dp"
+        android:layout_gravity="center"
+        app:buttonTextSize="17sp"
+        app:buttonText="Submit"/>
+
 
 </LinearLayout>

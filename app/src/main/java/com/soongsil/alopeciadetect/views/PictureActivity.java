@@ -26,32 +26,28 @@ import java.net.URI;
  */
 
 public class PictureActivity extends AppCompatActivity {
-    // TODO: Try Morphology function
 
-
-    private Bitmap picOrigin, picGrey, picBinary, picEdge;
+    private Bitmap picOrigin, picGrey, picBinary, picEdge, picAlopecia;
     private ImageView headImage;
-    private Mat matOrigin, matGrey, matBinary, matEdge;
+    private Mat matOrigin, matGrey, matBinary, matEdge, matAlopecia;
 
     private Button toGrey;
     private Button toBInary;
-    private Button toEdge;
     private Button keratin;
+    private Button alopecia;
 
     /*
      * Call OpenCV library
      */
     public native void ConvertRGBtoGray(long matAddrInput, long matAddrResult);
     public native void Segmentation(long matAddrInput, long matAddrResult);
+    public native void MorphologyErosion(long matAddrInput, long matAddrResult);
     public native void MorphologyOpening(long matAddrInput, long matAddrResult);
     public native void MorphologyClosing(long matAddrInput, long matAddrResult);
     public native int IsKeratin(long matAddrInput);
+    public native int IsAlopecia(long matAddrInput, long matAddrResult);
     public native void CanyEdgeDetect(long matAddrInput, long matAddrResult, int lowThreshold,
                                       int ratio, int kernel_size);
-
-    /*
-     * Native library
-     */
 
 
     static {
@@ -71,10 +67,11 @@ public class PictureActivity extends AppCompatActivity {
 
         picGrey = null;
         picEdge = null;
+        picAlopecia = null;
         toGrey = findViewById(R.id.btn_grey);
-        toEdge = findViewById(R.id.btn_edge);
         toBInary = findViewById(R.id.btn_binary);
         keratin = findViewById(R.id.btn_kertin);
+        alopecia = findViewById(R.id.btn_alopecia);
 
         try {
 
@@ -103,6 +100,9 @@ public class PictureActivity extends AppCompatActivity {
 
             if ( matBinary != null ) matBinary.release();
             matBinary = new Mat(matOrigin.rows(), matOrigin.cols(), matOrigin.type());
+
+            if ( matAlopecia != null ) matAlopecia.release();
+            matAlopecia = new Mat(matOrigin.rows(), matOrigin.cols(), matOrigin.type());
         }
         catch (Exception e) {
             Log.e("error", ""+e);
@@ -142,25 +142,6 @@ public class PictureActivity extends AppCompatActivity {
                 }
             }
         });
-        toEdge.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                if(picGrey != null) {
-                    if (picEdge == null) {
-                        CanyEdgeDetect(matGrey.getNativeObjAddr(), matEdge.getNativeObjAddr()
-                                , 80, 3, 3);
-                        picEdge = Bitmap.createBitmap(matEdge.cols(), matEdge.rows(), Bitmap.Config.ARGB_8888);
-                        Utils.matToBitmap(matEdge, picEdge);
-                        headImage.setImageBitmap(picEdge);
-                    } else {
-                        headImage.setImageBitmap(picEdge);
-                    }
-                } else {
-                    Toast.makeText(getApplicationContext(), "Please create Greyscale", Toast.LENGTH_LONG).show();
-                }
-            }
-        });
         keratin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -168,6 +149,20 @@ public class PictureActivity extends AppCompatActivity {
                 int score = IsKeratin(matOrigin.getNativeObjAddr());
 
                 Toast.makeText(getApplicationContext(), "score : "+ score , Toast.LENGTH_LONG).show();
+
+            }
+        });
+        alopecia.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                int score = IsAlopecia(matOrigin.getNativeObjAddr(), matAlopecia.getNativeObjAddr());
+
+                picAlopecia = Bitmap.createBitmap(matAlopecia.cols(), matAlopecia.rows(), Bitmap.Config.ARGB_8888);
+                Utils.matToBitmap(matAlopecia, picAlopecia);
+                headImage.setImageBitmap(picAlopecia);
+
+                Toast.makeText(getApplicationContext(), "score : " + score , Toast.LENGTH_LONG).show();
 
             }
         });

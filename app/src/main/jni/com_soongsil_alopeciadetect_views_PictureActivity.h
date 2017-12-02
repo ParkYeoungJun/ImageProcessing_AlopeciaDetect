@@ -25,6 +25,14 @@ JNIEXPORT void JNICALL Java_com_soongsil_alopeciadetect_views_PictureActivity_Se
 
 /*
  * Class:     com_soongsil_alopeciadetect_views_PictureActivity
+ * Method:    MorphologyErosion
+ * Signature: (JJ)V
+ */
+JNIEXPORT void JNICALL Java_com_soongsil_alopeciadetect_views_PictureActivity_MorphologyErosion
+  (JNIEnv *, jobject, jlong, jlong);
+
+/*
+ * Class:     com_soongsil_alopeciadetect_views_PictureActivity
  * Method:    MorphologyOpening
  * Signature: (JJ)V
  */
@@ -42,10 +50,18 @@ JNIEXPORT void JNICALL Java_com_soongsil_alopeciadetect_views_PictureActivity_Mo
 /*
  * Class:     com_soongsil_alopeciadetect_views_PictureActivity
  * Method:    IsKeratin
- * Signature: (JII)V
+ * Signature: (J)I
  */
-JNIEXPORT int JNICALL Java_com_soongsil_alopeciadetect_views_PictureActivity_IsKeratin
+JNIEXPORT jint JNICALL Java_com_soongsil_alopeciadetect_views_PictureActivity_IsKeratin
   (JNIEnv *, jobject, jlong);
+
+/*
+ * Class:     com_soongsil_alopeciadetect_views_PictureActivity
+ * Method:    IsAlopecia
+ * Signature: (J)I
+ */
+JNIEXPORT jint JNICALL Java_com_soongsil_alopeciadetect_views_PictureActivity_IsAlopecia
+  (JNIEnv *, jobject, jlong, jlong);
 
 /*
  * Class:     com_soongsil_alopeciadetect_views_PictureActivity

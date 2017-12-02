@@ -12,8 +12,10 @@
         android:layout_width="match_parent"
         android:layout_gravity="center"
         android:gravity="center"
-        android:text="question 1"
-        android:textSize="30sp"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:text="눈썹 상단부터 헤어라인까지 들어가는 손가락 수가 4개 이상이다."
+        android:textSize="20sp"
         android:layout_weight="2"/>
 
 
