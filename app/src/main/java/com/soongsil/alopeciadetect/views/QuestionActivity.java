@@ -3,6 +3,7 @@ package com.soongsil.alopeciadetect.views;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
@@ -33,10 +34,15 @@ import com.soongsil.alopeciadetect.fragments.QuestionFragment4;
 import com.soongsil.alopeciadetect.fragments.QuestionFragment5;
 import com.soongsil.alopeciadetect.fragments.QuestionFragment6;
 import com.soongsil.alopeciadetect.fragments.QuestionFragment7;
+import com.soongsil.alopeciadetect.objects.QuestionRealmObj;
 import com.unstoppable.submitbuttonview.SubmitButton;
 
 import java.util.ArrayList;
 
+import io.realm.Realm;
+import io.realm.RealmResults;
+
+import static com.soongsil.alopeciadetect.utils.RequestCode.GALLERY_REQUEST_CODE;
 import static com.soongsil.alopeciadetect.utils.RequestCode.QUESTION_REQUEST_CODE;
 
 /**
@@ -50,6 +56,10 @@ public class QuestionActivity extends AppCompatActivity {
     private static int[] score;
 
     protected static SubmitButton sbmBtn;
+
+    private static Bundle rtnBundle;
+
+    private static Realm mRealm;
 
     public void QuestionActivity() {}
 
@@ -66,6 +76,9 @@ public class QuestionActivity extends AppCompatActivity {
     {
         activity = this;
         score = new int[7];
+        rtnBundle = new Bundle();
+
+        mRealm = Realm.getDefaultInstance();
 
         for(int i = 0 ; i < 7 ; ++i){
             score[i] = -1;
@@ -75,9 +88,7 @@ public class QuestionActivity extends AppCompatActivity {
         viewPager.setAdapter(new PagerAdapterClass(getSupportFragmentManager()));
     }
 
-    public class PagerAdapterClass extends FragmentStatePagerAdapter {
-
-        private LayoutInflater inflater;
+    private class PagerAdapterClass extends FragmentStatePagerAdapter {
 
         public PagerAdapterClass(FragmentManager fm) {
             super(fm);
@@ -307,16 +318,28 @@ public class QuestionActivity extends AppCompatActivity {
                             }
 
                             if (doneFlag) {
-                                Bundle bundle = new Bundle();
-                                bundle.putIntArray("score", score);
-                                activity.setResult(QUESTION_REQUEST_CODE, new Intent().putExtra("data", bundle));
 
                                 sbmBtn.doResult(true);
 
                                 new Handler().postDelayed(new Runnable() {
                                     @Override
                                     public void run() {
+
+                                        mRealm.beginTransaction();
+
+                                        RealmResults<QuestionRealmObj> queList = mRealm.where(QuestionRealmObj.class).findAll();
+                                        queList.deleteAllFromRealm();
+
+                                        QuestionRealmObj user = mRealm.createObject(QuestionRealmObj.class);
+                                        user.setScore(score[0] +" "+ score[1] +" "+ score[2] +" "+ score[3] +" "+ score[4] +" "+ score[5] +" "+ score[6]);
+
+                                        mRealm.commitTransaction();
+
+                                        rtnBundle.putIntArray("score", score);
+                                        activity.setResult(QUESTION_REQUEST_CODE, new Intent().putExtra("data", rtnBundle));
+                                        if(sbmBtn != null) sbmBtn.reset();
                                         activity.finish();
+
                                     }
                                 }, 1000);
 
@@ -333,6 +356,7 @@ public class QuestionActivity extends AppCompatActivity {
             }
         }
     };
+
 
     public static class SubmitFragment extends Fragment {
 
@@ -355,5 +379,26 @@ public class QuestionActivity extends AppCompatActivity {
 
     }
 
+    private long backKeyPressedTime = 0;
+    private Toast toast;
+
+    @Override
+    public void onBackPressed() {
+
+        if (System.currentTimeMillis() > backKeyPressedTime + 2000) {
+            backKeyPressedTime = System.currentTimeMillis();
+            toast = Toast.makeText(getApplicationContext(), "\'뒤로\'버튼을 한번 더 누르시면 종료됩니다.", Toast.LENGTH_SHORT);
+            toast.show();
+            return;
+        }
+        if (System.currentTimeMillis() <= backKeyPressedTime + 2000)
+        {
+            Intent homeIntent = new Intent(Intent.ACTION_MAIN);
+            homeIntent.addCategory( Intent.CATEGORY_HOME );
+            homeIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(homeIntent);
+            toast.cancel();
+        }
+    }
 
 }

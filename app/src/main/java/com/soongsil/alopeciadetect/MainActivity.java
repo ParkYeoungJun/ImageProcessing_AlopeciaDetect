@@ -1,9 +1,12 @@
 package com.soongsil.alopeciadetect;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -11,29 +14,50 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
-import com.soongsil.alopeciadetect.views.PictureActivity;
+import com.github.clans.fab.FloatingActionButton;
+import com.github.clans.fab.FloatingActionMenu;
+import com.soongsil.alopeciadetect.views.ProcessActivity;
 import com.soongsil.alopeciadetect.views.QuestionActivity;
+import com.wang.avi.AVLoadingIndicatorView;
 
-import java.io.ByteArrayOutputStream;
+import org.opencv.android.Utils;
+import org.opencv.core.Mat;
+
+import io.realm.Realm;
 
 import static com.soongsil.alopeciadetect.utils.RequestCode.GALLERY_REQUEST_CODE;
 import static com.soongsil.alopeciadetect.utils.RequestCode.QUESTION_REQUEST_CODE;
 
 
-public class MainActivity extends AppCompatActivity{
+public class MainActivity extends AppCompatActivity {
 
-    private ViewPager viewPager;
     private int[] score;
+    private Uri uri;
 
-    private Button fromGallery;
-    private Button fromCamera;
+    private FloatingActionMenu floatingMenu;
+    private FloatingActionButton rewriteBtn, toGallery, toAnalyze;
 
     private Bitmap headPicture;
+    private ImageView headImgView;
+    private TextView headHint;
+    private AVLoadingIndicatorView avLoading;
+
+    private SharedPreferences sp;
+
+    public native void ConvertRGBtoGray(long matAddrInput, long matAddrResult);
+    public native int IsKeratin(long matAddrInput, long matAddrResult);
+    public native int IsAlopecia(long matAddrInput, long matAddrResult);
+    static {
+        System.loadLibrary("opencv_java3");
+        System.loadLibrary("native-lib");
+    }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState){
+    protected void onCreate(Bundle savedInstanceState) {
         setTheme(R.style.AppTheme);
 
         super.onCreate(savedInstanceState);
@@ -41,16 +65,32 @@ public class MainActivity extends AppCompatActivity{
 
         initial();
 
-        Intent questionIntent = new Intent(getApplicationContext(), QuestionActivity.class);;
-        startActivityForResult(questionIntent, QUESTION_REQUEST_CODE);
+        boolean hasVisted = sp.getBoolean("hasVisited", false);
+        if(!hasVisted) {
+
+            Intent questionIntent = new Intent(getApplicationContext(), QuestionActivity.class);
+            startActivityForResult(questionIntent, QUESTION_REQUEST_CODE);
+
+        }
     }
 
     private void initial() {
 
-        fromGallery = findViewById(R.id.btn_from_gallery);
-        fromCamera = findViewById(R.id.btn_from_camera);
+        headPicture = null;
+        uri = null;
 
-        fromGallery.setOnClickListener(new View.OnClickListener() {
+        Realm.init(this);
+
+        headImgView = findViewById(R.id.head_picture);
+        floatingMenu = findViewById(R.id.floating_menu);
+        rewriteBtn = findViewById(R.id.floating_rewrite);
+        toGallery = findViewById(R.id.floating_gallery);
+        toAnalyze = findViewById(R.id.floating_history);
+        headHint = findViewById(R.id.head_picture_hint);
+        avLoading = findViewById(R.id.avi);
+        avLoading.hide();
+
+        toGallery.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(Intent.ACTION_PICK);
@@ -59,45 +99,116 @@ public class MainActivity extends AppCompatActivity{
                 startActivityForResult(intent, GALLERY_REQUEST_CODE);
             }
         });
-        fromCamera.setOnClickListener(new View.OnClickListener() {
+        rewriteBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent questionIntent = new Intent(getApplicationContext(), QuestionActivity.class);
+                startActivityForResult(questionIntent, QUESTION_REQUEST_CODE);
+            }
+        });
+        toAnalyze.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
             }
         });
+
+        sp = getSharedPreferences("firstflag", Context.MODE_PRIVATE);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if(data == null) {
+        if (data == null) {
             return;
         }
 
-        if(requestCode == QUESTION_REQUEST_CODE) {
-            Bundle bundle = data.getExtras().getBundle("data");
-            score = bundle.getIntArray("score");
+        if (requestCode == QUESTION_REQUEST_CODE) {
 
-            Log.e("asdf", "asdfadf");
+            try {
+
+                SharedPreferences.Editor e = sp.edit();
+                e.putBoolean("hasVisited", true);
+                e.commit();
+
+                Bundle bundle = data.getExtras().getBundle("data");
+                score = bundle.getIntArray("score");
+
+                floatingMenu.close(true);
+
+                Toast.makeText(getApplicationContext(), score[0] +" "+ score[1] +" "+ score[2] +" "+ score[3] +" "+ score[4] +" "+ score[5] +" "+ score[6], Toast.LENGTH_LONG).show();
+
+            } catch (Exception e) {
+                Log.e("error", e.toString());
+            }
         }
         else if(requestCode == GALLERY_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
             try {
 
-                Uri uri = data.getData();
+                uri = data.getData();
+                headPicture = MediaStore.Images.Media.getBitmap(getContentResolver(), uri);
+                headHint.setText("");
+                headImgView.setImageBitmap(headPicture);
 
-                Intent picIntent = new Intent(getApplicationContext(), PictureActivity.class);
-                picIntent.putExtra("uri",uri.toString());
-                startActivity(picIntent);
+                floatingMenu.close(true);
+
+                avLoading.show();
+
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        Mat matInput = new Mat();
+                        Bitmap bmp = headPicture.copy(Bitmap.Config.ARGB_8888, true);
+                        Utils.bitmapToMat(bmp, matInput);
+
+                        Mat matKeratin = new Mat(matInput.rows(), matInput.cols(), matInput.type());
+                        Mat matAlopecia = new Mat(matInput.rows(), matInput.cols(), matInput.type());
+
+                        int keratinScore = 0;
+                        int alopeciaScore = 0;
+
+                        keratinScore = IsKeratin(matInput.getNativeObjAddr(), matKeratin.getNativeObjAddr());
+                        alopeciaScore = IsAlopecia(matInput.getNativeObjAddr(), matAlopecia.getNativeObjAddr());
+
+                        Intent processIntent = new Intent(getApplicationContext(), ProcessActivity.class);
+                        processIntent.putExtra("keratin_mat", matKeratin.getNativeObjAddr());
+                        processIntent.putExtra("alopecia_mat", matAlopecia.getNativeObjAddr());
+                        processIntent.putExtra("keratin_score", keratinScore);
+                        processIntent.putExtra("alopecia_score", alopeciaScore);
+                        startActivity(processIntent);
+
+                        avLoading.hide();
+                    }
+                }, 2000);
+
 
             } catch (Exception e) {
                 Log.e("test", e.getMessage());
             }
         }
     }
+
+    private long backKeyPressedTime = 0;
+    private Toast toast;
+
+    @Override
+    public void onBackPressed() {
+
+        if (System.currentTimeMillis() > backKeyPressedTime + 2000) {
+            backKeyPressedTime = System.currentTimeMillis();
+            toast = Toast.makeText(getApplicationContext(), "\'뒤로\'버튼을 한번 더 누르시면 종료됩니다.", Toast.LENGTH_SHORT);
+            toast.show();
+            return;
+        }
+        if (System.currentTimeMillis() <= backKeyPressedTime + 2000)
+        {
+            finish();
+            toast.cancel();
+        }
+    }
 }
-
-
 
 /**
 

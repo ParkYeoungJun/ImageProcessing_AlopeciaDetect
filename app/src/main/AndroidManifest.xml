@@ -36,8 +36,7 @@
 
         <activity android:name=".views.QuestionActivity"
             android:theme="@style/AppFullScreenTheme"/>
-
-        <activity android:name=".views.PictureActivity"
+        <activity android:name=".views.ProcessActivity"
             android:theme="@style/AppFullScreenTheme"/>
 
     </application>

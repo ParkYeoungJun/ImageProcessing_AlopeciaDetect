@@ -1,5 +1,7 @@
 #include <jni.h>
 #include "com_soongsil_alopeciadetect_views_PictureActivity.h"
+#include "com_soongsil_alopeciadetect_MainActivity.h"
+#include "com_soongsil_alopeciadetect_views_ProcessActivity.h"
 
 #include <opencv2/core/core.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
@@ -65,12 +67,13 @@ JNIEXPORT void JNICALL Java_com_soongsil_alopeciadetect_views_PictureActivity_Mo
 
 }
 
-JNIEXPORT int JNICALL Java_com_soongsil_alopeciadetect_views_PictureActivity_IsKeratin
-        (JNIEnv * env, jobject instance, jlong matAddrInput) {
+JNIEXPORT jint JNICALL Java_com_soongsil_alopeciadetect_MainActivity_IsKeratin
+        (JNIEnv * env, jobject instance, jlong matAddrInput, jlong matAddrResult) {
 
     int rtnScore = 1;
 
     Mat &matInput = *(Mat *)matAddrInput;
+    Mat &matResult = *(Mat *)matAddrResult;
     Mat matGrey, img_labels, stats, centroids, matBinary;
 
     //gray-scale
@@ -79,6 +82,7 @@ JNIEXPORT int JNICALL Java_com_soongsil_alopeciadetect_views_PictureActivity_IsK
     //thresholding
 //    threshold(matGrey, matBinary, 0, 255, THRESH_OTSU | THRESH_BINARY);
     threshold(matGrey, matBinary, 140, 255, THRESH_BINARY);
+    threshold(matGrey, matResult, 140, 255, THRESH_BINARY);
 
 
     //labeling
@@ -88,17 +92,17 @@ JNIEXPORT int JNICALL Java_com_soongsil_alopeciadetect_views_PictureActivity_IsK
     else if(numOfLabels > 500)	rtnScore = 3;
     else if(numOfLabels > 250)	rtnScore = 2;
 
-    return rtnScore;
+    return numOfLabels;
 }
 
-JNIEXPORT jint JNICALL Java_com_soongsil_alopeciadetect_views_PictureActivity_IsAlopecia
+JNIEXPORT jint JNICALL Java_com_soongsil_alopeciadetect_MainActivity_IsAlopecia
         (JNIEnv * env, jobject instance, jlong matAddrInput, jlong matAddrResult) {
 
     int rtnScore = 1;
 
     Mat &matInput = *(Mat *)matAddrInput;
     Mat &matResult = *(Mat *)matAddrResult;
-    Mat matGrey, img_labels, stats, centroids, matBinary;
+    Mat matGrey, matBinary;
 
     //gray-scale
     cvtColor(matInput, matGrey, CV_RGB2GRAY);
@@ -133,4 +137,13 @@ JNIEXPORT void JNICALL Java_com_soongsil_alopeciadetect_views_PictureActivity_Ca
     Canny(matResult, matResult, lowThreshold, lowThreshold*ratio, kernel_size);
 
 }
+
+JNIEXPORT jint JNICALL Java_com_soongsil_alopeciadetect_views_ProcessActivity_AddrToMat
+        (JNIEnv * env, jobject instance, jlong matAddrInput, jlong matAddrResult) {
+    Mat &matInput = *(Mat *)matAddrInput;
+    Mat &matResult = *(Mat *)matAddrResult;
+
+    threshold(matInput, matResult, 140, 255, THRESH_BINARY);
+}
+
 }
