@@ -9,10 +9,18 @@ extern "C" {
 #endif
 /*
  * Class:     com_soongsil_alopeciadetect_views_ProcessActivity
- * Method:    AddrToMat
+ * Method:    IsKeratin
  * Signature: (JJ)I
  */
-JNIEXPORT jint JNICALL Java_com_soongsil_alopeciadetect_views_ProcessActivity_AddrToMat
+JNIEXPORT jint JNICALL Java_com_soongsil_alopeciadetect_views_ProcessActivity_IsKeratin
+  (JNIEnv *, jobject, jlong, jlong);
+
+/*
+ * Class:     com_soongsil_alopeciadetect_views_ProcessActivity
+ * Method:    IsAlopecia
+ * Signature: (JJ)I
+ */
+JNIEXPORT jint JNICALL Java_com_soongsil_alopeciadetect_views_ProcessActivity_IsAlopecia
   (JNIEnv *, jobject, jlong, jlong);
 
 #ifdef __cplusplus

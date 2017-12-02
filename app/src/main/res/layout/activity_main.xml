@@ -87,27 +87,30 @@
 
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/floating_gallery"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
             android:src="@drawable/ic_gallery"
             fab:fab_label="사진 검토"
-            fab:fab_size="mini" />
+            fab:fab_size="mini"
+            android:scaleType="centerInside"/>
 
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/floating_history"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
             android:src="@drawable/ic_history"
             fab:fab_label="기록"
-            fab:fab_size="mini" />
+            fab:fab_size="mini"
+            android:scaleType="centerInside" />
 
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/floating_rewrite"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
             android:src="@drawable/ic_document"
             fab:fab_label="질의문 재작성"
-            fab:fab_size="mini" />
+            fab:fab_size="mini"
+            android:scaleType="centerInside"/>
 
     </com.github.clans.fab.FloatingActionMenu>
 

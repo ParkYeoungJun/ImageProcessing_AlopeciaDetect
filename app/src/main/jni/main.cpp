@@ -67,7 +67,7 @@ JNIEXPORT void JNICALL Java_com_soongsil_alopeciadetect_views_PictureActivity_Mo
 
 }
 
-JNIEXPORT jint JNICALL Java_com_soongsil_alopeciadetect_MainActivity_IsKeratin
+JNIEXPORT jint JNICALL Java_com_soongsil_alopeciadetect_views_ProcessActivity_IsKeratin
         (JNIEnv * env, jobject instance, jlong matAddrInput, jlong matAddrResult) {
 
     int rtnScore = 1;
@@ -95,7 +95,7 @@ JNIEXPORT jint JNICALL Java_com_soongsil_alopeciadetect_MainActivity_IsKeratin
     return numOfLabels;
 }
 
-JNIEXPORT jint JNICALL Java_com_soongsil_alopeciadetect_MainActivity_IsAlopecia
+JNIEXPORT jint JNICALL Java_com_soongsil_alopeciadetect_views_ProcessActivity_IsAlopecia
         (JNIEnv * env, jobject instance, jlong matAddrInput, jlong matAddrResult) {
 
     int rtnScore = 1;
