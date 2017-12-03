@@ -20,6 +20,7 @@ import android.widget.Toast;
 
 import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
+import com.soongsil.alopeciadetect.views.HistoryActivity;
 import com.soongsil.alopeciadetect.views.ProcessActivity;
 import com.soongsil.alopeciadetect.views.QuestionActivity;
 import com.wang.avi.AVLoadingIndicatorView;
@@ -28,6 +29,7 @@ import org.opencv.android.Utils;
 import org.opencv.core.Mat;
 
 import io.realm.Realm;
+import io.realm.RealmConfiguration;
 
 import static com.soongsil.alopeciadetect.utils.RequestCode.GALLERY_REQUEST_CODE;
 import static com.soongsil.alopeciadetect.utils.RequestCode.QUESTION_REQUEST_CODE;
@@ -80,6 +82,11 @@ public class MainActivity extends AppCompatActivity {
         uri = null;
 
         Realm.init(this);
+        RealmConfiguration realmConf = new RealmConfiguration
+                .Builder()
+                .deleteRealmIfMigrationNeeded()
+                .build();
+        Realm.setDefaultConfiguration(realmConf);
 
         headImgView = findViewById(R.id.head_picture);
         floatingMenu = findViewById(R.id.floating_menu);
@@ -109,7 +116,8 @@ public class MainActivity extends AppCompatActivity {
         toAnalyze.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                Intent historyIntent = new Intent(getApplicationContext(), HistoryActivity.class);
+                startActivity(historyIntent);
             }
         });
 
@@ -137,8 +145,6 @@ public class MainActivity extends AppCompatActivity {
 
                 floatingMenu.close(true);
 
-                Toast.makeText(getApplicationContext(), score[0] +" "+ score[1] +" "+ score[2] +" "+ score[3] +" "+ score[4] +" "+ score[5] +" "+ score[6], Toast.LENGTH_LONG).show();
-
             } catch (Exception e) {
                 Log.e("error", e.toString());
             }
@@ -159,29 +165,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void run() {
 
-//                        Mat matInput = new Mat();
-//                        Bitmap bmp = headPicture.copy(Bitmap.Config.ARGB_8888, true);
-//                        Utils.bitmapToMat(bmp, matInput);
-//
-//                        Mat matKeratin = new Mat(matInput.rows(), matInput.cols(), matInput.type());
-//                        Mat matAlopecia = new Mat(matInput.rows(), matInput.cols(), matInput.type());
-//
-//                        int keratinScore = 0;
-//                        int alopeciaScore = 0;
-//
-//                        keratinScore = IsKeratin(matInput.getNativeObjAddr(), matKeratin.getNativeObjAddr());
-//                        alopeciaScore = IsAlopecia(matInput.getNativeObjAddr(), matAlopecia.getNativeObjAddr());
-
-//                        Log.e("matker", ""+matKeratin.getNativeObjAddr());
-//
                         Intent processIntent = new Intent(getApplicationContext(), ProcessActivity.class);
-//                        processIntent.putExtra("keratin_mat", matKeratin.getNativeObjAddr());
-//                        processIntent.putExtra("alopecia_mat", matAlopecia.getNativeObjAddr());
-//                        processIntent.putExtra("keratin_score", keratinScore);
-//                        processIntent.putExtra("alopecia_score", alopeciaScore);
-//                        processIntent.putExtra("cols", matInput.cols());
-//                        processIntent.putExtra("rows", matInput.rows());
-
                         processIntent.putExtra("uri", uri.toString());
                         startActivity(processIntent);
 

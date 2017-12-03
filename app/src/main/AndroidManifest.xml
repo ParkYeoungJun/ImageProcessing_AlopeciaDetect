@@ -38,6 +38,8 @@
             android:theme="@style/AppFullScreenTheme"/>
         <activity android:name=".views.ProcessActivity"
             android:theme="@style/AppFullScreenTheme"/>
+        <activity android:name=".views.HistoryActivity"
+            android:theme="@style/AppFullScreenTheme"/>
 
     </application>
 

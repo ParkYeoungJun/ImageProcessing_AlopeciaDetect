@@ -80,7 +80,6 @@ JNIEXPORT jint JNICALL Java_com_soongsil_alopeciadetect_views_ProcessActivity_Is
     cvtColor(matInput, matGrey, CV_RGB2GRAY);
 
     //thresholding
-//    threshold(matGrey, matBinary, 0, 255, THRESH_OTSU | THRESH_BINARY);
     threshold(matGrey, matBinary, 140, 255, THRESH_BINARY);
     threshold(matGrey, matResult, 140, 255, THRESH_BINARY);
 
@@ -110,9 +109,6 @@ JNIEXPORT jint JNICALL Java_com_soongsil_alopeciadetect_views_ProcessActivity_Is
     //thresholding
     threshold(matGrey, matBinary, 80, 255, THRESH_BINARY);
     threshold(matGrey, matResult, 80, 255, THRESH_BINARY);
-
-//    Mat element5(5, 5, CV_8U, Scalar(1));
-//    morphologyEx(matResult, matResult, MORPH_CLOSE, element5);
 
     int sum = 0;
 

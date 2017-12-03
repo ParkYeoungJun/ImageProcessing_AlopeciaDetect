@@ -331,7 +331,7 @@ public class QuestionActivity extends AppCompatActivity {
                                         queList.deleteAllFromRealm();
 
                                         QuestionRealmObj user = mRealm.createObject(QuestionRealmObj.class);
-                                        user.setScore(score[0] +" "+ score[1] +" "+ score[2] +" "+ score[3] +" "+ score[4] +" "+ score[5] +" "+ score[6]);
+                                        user.setScore(score[0] +""+ score[1] +""+ score[2] +""+ score[3] +""+ score[4] +""+ score[5] +""+ score[6]);
 
                                         mRealm.commitTransaction();
 
